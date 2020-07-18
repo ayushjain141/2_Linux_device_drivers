@@ -17,5 +17,5 @@ module_init(ofd_init);
 module_exit(ofd_exit);
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("Anil Kumar Pugalia <email@sarika-pugs.com>");
-MODULE_DESCRIPTION("Our First Driver");
+MODULE_AUTHOR("Ayush Jain");
+MODULE_DESCRIPTION("hello_lkm_test");
