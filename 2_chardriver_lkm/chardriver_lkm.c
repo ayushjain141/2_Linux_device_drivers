@@ -15,16 +15,17 @@ static struct cdev c_dev;
 static struct class *cl;
 static char c[256];
 static int  message_length;
+
+
+
 /** file operations of this driver */
 static int open_chardriver(struct inode *i, struct file *f)
 {
-//printk(KERN_INFO "device open\n");
 return 0;
 }      
 
 static int release_chardriver(struct inode *i, struct file *f)
 {
-//printk(KERN_INFO "device released\n");
 return 0;
 }      
 
