@@ -1,0 +1,3 @@
+/root/1_workspace/2_device_drivers/4_gpiolkm/2_gpio_kernthread_lkm/gpio_kernthread_lkm.ko
+/root/1_workspace/2_device_drivers/4_gpiolkm/2_gpio_kernthread_lkm/gpio_kernthread_lkm.o
+
