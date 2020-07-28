@@ -33,10 +33,10 @@ __attribute__((section("__versions"))) = {
 	{ 0x27551b82, __VMLINUX_SYMBOL_STR(gpiod_export) },
 	{ 0xba7fa7c1, __VMLINUX_SYMBOL_STR(gpiod_direction_output_raw) },
 	{ 0x47229b5c, __VMLINUX_SYMBOL_STR(gpio_request) },
+	{ 0xf9a482f9, __VMLINUX_SYMBOL_STR(msleep) },
+	{ 0x2e5810c6, __VMLINUX_SYMBOL_STR(__aeabi_unwind_cpp_pr1) },
 	{ 0x27e1a049, __VMLINUX_SYMBOL_STR(printk) },
 	{ 0x8d232dcf, __VMLINUX_SYMBOL_STR(gpiod_get_raw_value) },
-	{ 0x2e5810c6, __VMLINUX_SYMBOL_STR(__aeabi_unwind_cpp_pr1) },
-	{ 0xf9a482f9, __VMLINUX_SYMBOL_STR(msleep) },
 	{ 0x89df42aa, __VMLINUX_SYMBOL_STR(gpiod_set_raw_value) },
 	{ 0x53aa5f51, __VMLINUX_SYMBOL_STR(gpio_to_desc) },
 	{ 0xb1ad28e0, __VMLINUX_SYMBOL_STR(__gnu_mcount_nc) },
@@ -48,4 +48,4 @@ __attribute__((section(".modinfo"))) =
 "depends=";
 
 
-MODULE_INFO(srcversion, "F0057DCECF451EF8BC7FFB3");
+MODULE_INFO(srcversion, "BD38722EF91930E8523E280");

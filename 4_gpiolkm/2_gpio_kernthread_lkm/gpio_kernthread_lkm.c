@@ -31,6 +31,8 @@ static unsigned int gpioButton = 115;   ///< hard coding the button gpio for thi
 static unsigned int irqNumber;          ///< Used to share the IRQ number within this file
 static unsigned int numberPresses = 0;  ///< For information, store the number of button presses
 static bool	    ledOn = 0;          ///< Is the LED on or off? Used to invert its state (off by default)
+static bool 	    button_value = 0;	
+static bool         button_flag  = 0;
 static dev_t gpio_devt;
 /// Function prototype for the custom IRQ handler function -- see below for the implementation
 static irqreturn_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs);
@@ -86,8 +88,6 @@ result = request_threaded_irq(irqNumber, (irq_handler_t)ebbgpio_irq_handler, ebb
 
 
 //============================================================================================
-
-
    printk(KERN_INFO "GPIO_TEST: The interrupt request result is: %d\n", result);
    return result;
 
@@ -129,27 +129,50 @@ static irqreturn_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt
    printk(KERN_INFO "GPIO_TEST: Interrupt! (button state is %d)\n", gpio_get_value(gpioButton));
    numberPresses++;                    // Global counter, will be outputted when the module is unloaded
    return  IRQ_WAKE_THREAD;      // wake the irq_thread   
-	
-
 }
 
+/// NOTE : 
+/** MANUAL TURNOFF of LED  
+* for automatic shutoff remove the if and else condition
+* for manual shutoff a (bool) button_flag is used and no other isr used separately for turnoff.
+* since the below handler is bottom half and in process context and hence
+* waiting loops are avoided for button press detection rather flags are used
+* hence both turnoff and turnon performable using only single interrupt handler. 	
+*/
+
 static  irqreturn_t ebbgpio_threaded_irq_function(int irq, void *dev_id){
+
+if(button_flag==0)
+	{
 	ledOn=0;
-	gpio_set_value(gpioLED, ledOn);	// Set the physical LED accordingly
-	msleep(4000); 			// reliable and non interruptble as per the - https://www.kernel.org/doc/html/latest/timers/timers-howto.html	
+	gpio_set_value(gpioLED, ledOn);	//Set the physical LED accordingly
+	msleep(2000); 			//reliable and non interruptble as per the - https://www.kernel.org/doc/html/latest/timers/timers-howto.html	
 	ledOn=1;
 	gpio_set_value(gpioLED, ledOn); // Set the physical LED accordingly
-	msleep(4000);
-	ledOn=0;
-	gpio_set_value(gpioLED, ledOn); // Set the physical LED accordingly
-	return  IRQ_HANDLED;
-} 
+	printk(KERN_INFO "LED on\n");
+	button_flag = 1;
+	return IRQ_HANDLED;
+	}
 
+else if(button_flag == 1) 
+       		{
+		printk(KERN_INFO "LED off\n");
+		msleep(1000);                   // this is just for debouncing for error by human button user (ex: long press)
+		ledOn=0;
+		gpio_set_value(gpioLED, ledOn); // Set the physical LED accordingly
+		button_flag=0;
+		return  IRQ_HANDLED;
+		}
+		
+} 
 //========================================================================
+
+
 
 
 /// This next calls are  mandatory -- they identify the initialization function
 /// and the cleanup function (as above).
+
 module_init(ebbgpio_init);
 module_exit(ebbgpio_exit);
 
