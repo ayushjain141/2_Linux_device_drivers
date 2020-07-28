@@ -80,9 +80,14 @@ static int __init ebbgpio_init(void){
 */
 
 //===========================================================================================
+
 /** this is a threaded interrupt request */ 	
-result = request_threaded_irq(irqNumber, (irq_handler_t)ebbgpio_irq_handler, ebbgpio_threaded_irq_function, IRQF_TRIGGER_RISING | IRQF_ONESHOT, "ebbgpio" ,NULL);
+result = request_threaded_irq(irqNumber, (irq_handler_t)ebbgpio_irq_handler, ebbgpio_threaded_irq_function, IRQF_TRIGGER_RISING | IRQF_ONESHOT, "ebbgpio" ,NULL);  // this works becoz of IRQF_ONESHOT flag testing of flags necessary
+
+
 //============================================================================================
+
+
    printk(KERN_INFO "GPIO_TEST: The interrupt request result is: %d\n", result);
    return result;
 
@@ -115,6 +120,9 @@ static void __exit ebbgpio_exit(void){
  *  @param regs   h/w specific register values -- only really ever used for debugging.
  *  return returns IRQ_HANDLED if successful -- should return IRQ_NONE otherwise.
  */
+
+//========================================================================
+
 static irqreturn_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt_regs *regs){
    ledOn = 0;                          // keep the led initially 0
    gpio_set_value(gpioLED, ledOn);     // Set the physical LED accordingly
@@ -124,7 +132,7 @@ static irqreturn_t ebbgpio_irq_handler(unsigned int irq, void *dev_id, struct pt
 	
 
 }
-//========================================================================
+
 static  irqreturn_t ebbgpio_threaded_irq_function(int irq, void *dev_id){
 	ledOn=0;
 	gpio_set_value(gpioLED, ledOn);	// Set the physical LED accordingly
@@ -136,6 +144,7 @@ static  irqreturn_t ebbgpio_threaded_irq_function(int irq, void *dev_id){
 	gpio_set_value(gpioLED, ledOn); // Set the physical LED accordingly
 	return  IRQ_HANDLED;
 } 
+
 //========================================================================
 
 
