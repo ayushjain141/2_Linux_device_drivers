@@ -84,7 +84,7 @@ static int __init ebbgpio_init(void){
 //===========================================================================================
 
 /** this is a threaded interrupt request */ 	
-result = request_threaded_irq(irqNumber, (irq_handler_t)ebbgpio_irq_handler, ebbgpio_threaded_irq_function, IRQF_TRIGGER_RISING | IRQF_ONESHOT, "ebbgpio" ,NULL);  // this works becoz of IRQF_ONESHOT flag testing of flags necessary
+result = request_threaded_irq(irqNumber, (irq_handler_t)ebbgpio_irq_handler, ebbgpio_threaded_irq_function, IRQF_TRIGGER_HIGH | IRQF_TRIGGER_LOW | IRQF_ONESHOT, "ebbgpio" ,NULL);  // this works becoz of IRQF_ONESHOT flag testing of flags necessary
 
 
 //============================================================================================
@@ -163,12 +163,9 @@ else if(button_flag == 1)
 		button_flag=0;
 		return  IRQ_HANDLED;
 		}
-		
+	
 } 
 //========================================================================
-
-
-
 
 /// This next calls are  mandatory -- they identify the initialization function
 /// and the cleanup function (as above).
