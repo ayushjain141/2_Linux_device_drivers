@@ -62,7 +62,7 @@ const char als_addr_buffer[1]={0x46};
 static dev_t first;
 static struct cdev c_dev;
 static struct class *cl;
-static char c[256];
+//static char c[256];
 static int  message_length;
 
 struct i2c_adapter *i2c_adap; 
@@ -89,7 +89,7 @@ static int release_rpr0521_chardriver(struct inode *i, struct file *f)
 static ssize_t read_rpr0521_chardriver(struct file *f, char __user *buf, size_t len, loff_t *off)
 {
 	static int num_read_bytes=0;
-	//num_read_bytes = len;
+	num_read_bytes = len;
 	i2c_master_recv(client, data_to_user ,2);			
 	if (copy_to_user(buf, &data_to_user, 2) != 0)
 		return -EFAULT;
@@ -107,7 +107,7 @@ static ssize_t write_rpr0521_chardriver(struct file *f, const char __user *buf, 
 		return -EFAULT;
 	else
 	{
-		printk(KERN_INFO " num of commands to sensor = %d\n",len);	
+//		printk(KERN_INFO " num of commands to sensor = %d\n",len);	
 		//message_length=len;
 		i2c_master_send(client, data_from_user, len);
 		return len;
@@ -167,8 +167,8 @@ static struct i2c_driver rpr0521_i2cdriver = {
 	.id_table = rpr0521_i2cdriver_idtable, 
 	//.probe  = rpr0521_i2c_probe,			to be checked later  
 	//.remove = rpr0521_i2c_remove,			may not be used		  	
-};
 
+};
 
 ///////////////////////////////////////////////////
 /** i2c and character driver registration */
@@ -186,7 +186,6 @@ static int __init initchardriver(void)
 	int ret,ret2,ret_init_write;
 	struct device *dev_ret;
 	printk(KERN_INFO "chardriver_lkm registred\n");
-
 	if( (ret = alloc_chrdev_region(&first, 0, 1, "chardriver_lkm")) <0  )
 	{
 		return ret;
@@ -198,7 +197,7 @@ static int __init initchardriver(void)
 		return PTR_ERR(cl);
 	}
 
-	if(IS_ERR(dev_ret = device_create(cl, NULL, first, NULL, "chardriver_null")))  ///  chardriver_null appears in /dev/null
+	if(IS_ERR(dev_ret = device_create(cl, NULL, first, NULL, "rpr0521_chardriver_null")))  ///  chardriver_null appears in /dev/null
 	{
 		class_destroy(cl);
 		unregister_chrdev_region(first, 1);
@@ -246,8 +245,6 @@ static void __exit exitchardriver(void)
 	printk(KERN_INFO "chardriver_lkm unregistered\n");
 	i2c_del_driver(&rpr0521_i2cdriver);
 }
-
-
 
 module_init(initchardriver);
 module_exit(exitchardriver);

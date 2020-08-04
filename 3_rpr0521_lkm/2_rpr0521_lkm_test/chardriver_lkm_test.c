@@ -24,7 +24,7 @@
 
 
 #define max 100 
-#define chardriver_file "/dev/chardriver_null"
+#define chardriver_file "/dev/rpr0521_chardriver_null"
 
 int main()
 {
