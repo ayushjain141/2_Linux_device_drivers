@@ -49,11 +49,14 @@
 #include <linux/regulator/consumer.h>
 #include <linux/of_gpio.h>
 
+/**sensor configuration data */
 #define BUFFER_SIZE 10  
 #define ADDR 0x38 	
 
-char const  init_buffer[2] = {0x40,0x80};
-char const  mode_buffer[2] = {0x41,0x85};
+char const init_buffer[2] = {0x40,0x80};
+char const mode_buffer[2] = {0x41,0x85};
+const char als_addr_buffer[1]={0x46};
+
 
 /** global variable declaration */
 static dev_t first;
@@ -65,6 +68,8 @@ static int  message_length;
 struct i2c_adapter *i2c_adap; 
 struct i2c_client  *client; 
 
+static char data_to_user[256];
+static char data_from_user[256];
 
 ///////////////////////////////////////////////
 /** file operations char driver */
@@ -83,10 +88,10 @@ static int release_rpr0521_chardriver(struct inode *i, struct file *f)
 
 static ssize_t read_rpr0521_chardriver(struct file *f, char __user *buf, size_t len, loff_t *off)
 {
-				
-	
-	
-	if (copy_to_user(buf, &c, message_length) != 0)
+	static int num_read_bytes=0;
+	//num_read_bytes = len;
+	i2c_master_recv(client, data_to_user ,2);			
+	if (copy_to_user(buf, &data_to_user, 2) != 0)
 		return -EFAULT;
 	else
 	{
@@ -96,15 +101,15 @@ static ssize_t read_rpr0521_chardriver(struct file *f, char __user *buf, size_t 
 
 static ssize_t write_rpr0521_chardriver(struct file *f, const char __user *buf, size_t len, loff_t *off)
 {
-	
-	
-	
-	if (copy_from_user(&c, buf, len) != 0)
+	static int num_write_bytes=0;
+	num_write_bytes = len;
+	if (copy_from_user(&data_from_user, buf, num_write_bytes) != 0)
 		return -EFAULT;
 	else
 	{
-		printk(KERN_INFO "num of bytes = %d\n",len);		
-		message_length=len;
+		printk(KERN_INFO " num of commands to sensor = %d\n",len);	
+		//message_length=len;
+		i2c_master_send(client, data_from_user, len);
 		return len;
 	}	       	
 }
@@ -139,7 +144,7 @@ static struct i2c_board_info rpr0521_i2cdriver_boardinfo[] = {
 
 };
 
-static const unsigned short normal_i2c[] = { 0x38, I2C_CLIENT_END };
+static const unsigned short normal_i2c[] = { ADDR, I2C_CLIENT_END };
 
 
 /** i2c device id  declaration */
@@ -152,8 +157,6 @@ MODULE_DEVICE_TABLE(i2c, rpr0521_i2cdriver_idtable);
 
 
 /** i2c driver operation definition */
-
-
 
 
 /** i2c driver declaration */
@@ -180,10 +183,8 @@ static struct i2c_driver rpr0521_i2cdriver = {
 static int __init initchardriver(void)
 {
 	/** char driver initialization  */
-	int ret,ret2;
+	int ret,ret2,ret_init_write;
 	struct device *dev_ret;
-	
-
 	printk(KERN_INFO "chardriver_lkm registred\n");
 
 	if( (ret = alloc_chrdev_region(&first, 0, 1, "chardriver_lkm")) <0  )
@@ -197,7 +198,7 @@ static int __init initchardriver(void)
 		return PTR_ERR(cl);
 	}
 
-	if(IS_ERR(dev_ret = device_create(cl, NULL, first, NULL, "chardriver_null")))    ///  chardriver_null appears in /dev/null
+	if(IS_ERR(dev_ret = device_create(cl, NULL, first, NULL, "chardriver_null")))  ///  chardriver_null appears in /dev/null
 	{
 		class_destroy(cl);
 		unregister_chrdev_region(first, 1);
@@ -221,16 +222,15 @@ static int __init initchardriver(void)
 	ret2 = i2c_add_driver(&rpr0521_i2cdriver);
 	
 	/** i2c_smbus write sensor init commands */	
-	if( i2c_master_send(client, init_buffer, 2 ) < 0 )
+	if( (ret_init_write = i2c_master_send(client, init_buffer, 2 )) > 0 )
 	{
-	printk(KERN_INFO "sensor init success\n");
+	printk(KERN_INFO "sensor init success = %d  \n", ret_init_write);
 	}	
 
-	if( i2c_master_send(client, mode_buffer, 2 ) < 0 )
+	if( (ret_init_write = i2c_master_send(client, mode_buffer, 2 )) >  0 )
 	{
-	printk(KERN_INFO "sensor mode success\n");
+	printk(KERN_INFO "sensor mode success = %d \n", ret_init_write);
 	}	
-
 	return ret2;
 
 }
