@@ -1,8 +1,9 @@
-cmd_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.o := gcc -Wp,-MD,/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/.rpr0521_driver_lkm.o.d  -nostdinc -isystem /usr/lib/gcc/arm-linux-gnueabihf/6/include -I./arch/arm/include -I./arch/arm/include/generated  -I./include -I./arch/arm/include/uapi -I./arch/arm/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -fno-PIE -fno-dwarf2-cfi-asm -fno-omit-frame-pointer -mapcs -mno-sched-prolog -fno-ipa-sra -mabi=aapcs-linux -mfpu=vfp -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -fno-delete-null-pointer-checks -Wno-frame-address -O2 --param=allow-store-data-races=0 -DCC_HAVE_ASM_GOTO -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wno-unused-const-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -pg -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init  -DMODULE  -DKBUILD_BASENAME='"rpr0521_driver_lkm"'  -DKBUILD_MODNAME='"rpr0521_driver_lkm"' -c -o /root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/.tmp_rpr0521_driver_lkm.o /root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.c
+cmd_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o := gcc -Wp,-MD,/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/.rpr0521_mainline_lkm.o.d  -nostdinc -isystem /usr/lib/gcc/arm-linux-gnueabihf/6/include -I./arch/arm/include -I./arch/arm/include/generated  -I./include -I./arch/arm/include/uapi -I./arch/arm/include/generated/uapi -I./include/uapi -I./include/generated/uapi -include ./include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -fshort-wchar -Werror-implicit-function-declaration -Wno-format-security -std=gnu89 -fno-PIE -fno-dwarf2-cfi-asm -fno-omit-frame-pointer -mapcs -mno-sched-prolog -fno-ipa-sra -mabi=aapcs-linux -mfpu=vfp -funwind-tables -marm -D__LINUX_ARM_ARCH__=7 -march=armv7-a -msoft-float -Uarm -fno-delete-null-pointer-checks -Wno-frame-address -O2 --param=allow-store-data-races=0 -DCC_HAVE_ASM_GOTO -Wframe-larger-than=1024 -fstack-protector-strong -Wno-unused-but-set-variable -Wno-unused-const-variable -fno-omit-frame-pointer -fno-optimize-sibling-calls -fno-var-tracking-assignments -pg -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fno-merge-all-constants -fmerge-constants -fno-stack-check -fconserve-stack -Werror=implicit-int -Werror=strict-prototypes -Werror=date-time -Werror=incompatible-pointer-types -Werror=designated-init  -DMODULE  -DKBUILD_BASENAME='"rpr0521_mainline_lkm"'  -DKBUILD_MODNAME='"rpr0521_mainline_lkm"' -c -o /root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/.tmp_rpr0521_mainline_lkm.o /root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.c
 
-source_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.o := /root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.c
+source_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o := /root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.c
 
-deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.o := \
+deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o := \
+    $(wildcard include/config/pm.h) \
   include/linux/compiler_types.h \
     $(wildcard include/config/have/arch/compiler/h.h) \
     $(wildcard include/config/enable/must/check.h) \
@@ -488,7 +489,6 @@ deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521
   include/linux/ioport.h \
   include/linux/klist.h \
   include/linux/pinctrl/devinfo.h \
-    $(wildcard include/config/pm.h) \
   include/linux/pinctrl/consumer.h \
   include/linux/seq_file.h \
   include/linux/fs.h \
@@ -865,55 +865,7 @@ deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521
   include/linux/iio/triggered_buffer.h \
   include/linux/iio/sysfs.h \
   include/linux/pm_runtime.h \
-  include/generated/uapi/linux/version.h \
-  include/linux/uaccess.h \
-  include/linux/kasan-checks.h \
-  arch/arm/include/asm/uaccess.h \
-    $(wildcard include/config/cpu/sw/domain/pan.h) \
-    $(wildcard include/config/cpu/use/domains.h) \
-    $(wildcard include/config/uaccess/with/memcpy.h) \
-  arch/arm/include/asm/domain.h \
-    $(wildcard include/config/io/36.h) \
-    $(wildcard include/config/cpu/cp15/mmu.h) \
-  arch/arm/include/generated/asm/extable.h \
-  include/asm-generic/extable.h \
-  include/linux/input.h \
-  include/uapi/linux/input.h \
-  include/uapi/linux/input-event-codes.h \
-  include/linux/platform_device.h \
-    $(wildcard include/config/suspend.h) \
-    $(wildcard include/config/hibernate/callbacks.h) \
-  include/linux/gpio.h \
-    $(wildcard include/config/arch/have/custom/gpio/h.h) \
-  arch/arm/include/asm/gpio.h \
-    $(wildcard include/config/arch/nr/gpio.h) \
-  include/asm-generic/gpio.h \
-  include/linux/gpio/driver.h \
-    $(wildcard include/config/gpio/generic.h) \
-    $(wildcard include/config/gpiolib/irqchip.h) \
-    $(wildcard include/config/of/gpio.h) \
-  include/linux/irqchip/chained_irq.h \
-  include/linux/pinctrl/pinctrl.h \
-    $(wildcard include/config/generic/pinconf.h) \
-  include/linux/pinctrl/pinconf-generic.h \
-    $(wildcard include/config/bias/pull/pin/default.h) \
-    $(wildcard include/config/input/enable.h) \
-    $(wildcard include/config/input/schmitt.h) \
-    $(wildcard include/config/input/schmitt/enable.h) \
-    $(wildcard include/config/low/power/mode.h) \
-    $(wildcard include/config/output/enable.h) \
-    $(wildcard include/config/output.h) \
-    $(wildcard include/config/power/source.h) \
-    $(wildcard include/config/sleep/hardware/state.h) \
-    $(wildcard include/config/end.h) \
-    $(wildcard include/config/max.h) \
-  include/linux/pinctrl/machine.h \
-  include/linux/gpio/consumer.h \
-    $(wildcard include/config/gpio/sysfs.h) \
-  include/linux/regulator/consumer.h \
-    $(wildcard include/config/regulator.h) \
-  include/linux/of_gpio.h \
 
-/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.o: $(deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.o)
+/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o: $(deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o)
 
-$(deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/2_rpr0521_lkm_test/rpr0521_driver_lkm.o):
+$(deps_/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o):

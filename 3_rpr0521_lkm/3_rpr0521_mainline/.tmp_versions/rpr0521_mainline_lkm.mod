@@ -1,0 +1,3 @@
+/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.ko
+/root/1_workspace/2_device_drivers/3_rpr0521_lkm/3_rpr0521_mainline/rpr0521_mainline_lkm.o
+

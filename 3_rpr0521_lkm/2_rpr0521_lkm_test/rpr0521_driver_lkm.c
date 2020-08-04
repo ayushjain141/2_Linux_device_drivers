@@ -32,6 +32,28 @@
 #include <linux/types.h>
 #include <linux/pm.h>
 
+///======  taken from mpu6050 android  
+//= https://android.googlesource.com/kernel/msm.git/+/android-msm-bullhead-3.10-marshmallow-dr-0/drivers/input/misc/mpu6050.c
+#include <linux/module.h>
+#include <linux/init.h>
+#include <linux/interrupt.h>
+#include <linux/platform_device.h>
+#include <linux/mutex.h>
+#include <linux/err.h>
+#include <linux/i2c.h>
+#include <linux/input.h>
+#include <linux/delay.h>
+#include <linux/slab.h>
+#include <linux/pm_runtime.h>
+#include <linux/gpio.h>
+#include <linux/regulator/consumer.h>
+#include <linux/of_gpio.h>
+
+#define BUFFER_SIZE 10  
+#define ADDR 0x38 	
+
+char const  init_buffer[2] = {0x40,0x80};
+char const  mode_buffer[2] = {0x41,0x85};
 
 /** global variable declaration */
 static dev_t first;
@@ -39,9 +61,16 @@ static struct cdev c_dev;
 static struct class *cl;
 static char c[256];
 static int  message_length;
-struct i2c_adapter *adap;
 
-/** file operations of this driver */
+struct i2c_adapter *i2c_adap; 
+struct i2c_client  *client; 
+
+
+///////////////////////////////////////////////
+/** file operations char driver */
+///////////////////////////////////////////////
+
+/** char driver operation definition */
 static int open_rpr0521_chardriver(struct inode *i, struct file *f)
 {
 	return 0;
@@ -54,6 +83,9 @@ static int release_rpr0521_chardriver(struct inode *i, struct file *f)
 
 static ssize_t read_rpr0521_chardriver(struct file *f, char __user *buf, size_t len, loff_t *off)
 {
+				
+	
+	
 	if (copy_to_user(buf, &c, message_length) != 0)
 		return -EFAULT;
 	else
@@ -64,6 +96,9 @@ static ssize_t read_rpr0521_chardriver(struct file *f, char __user *buf, size_t 
 
 static ssize_t write_rpr0521_chardriver(struct file *f, const char __user *buf, size_t len, loff_t *off)
 {
+	
+	
+	
 	if (copy_from_user(&c, buf, len) != 0)
 		return -EFAULT;
 	else
@@ -85,16 +120,12 @@ static struct file_operations fops_rpr0521_chardriver = {
 };
 
 
-/** i2c driver operation declaration */
-
-/*
-static int rpr0521_i2c_probe()
-{
-}
-*/
+//////////////////////////////////////////////////////
+/** i2c driver operation definition/declaration */
+//////////////////////////////////////////////////////
 
 
-/** i2c driver operation declaration */
+/** i2c hardware declaration */
 static struct i2c_board_info rpr0521_i2cdriver_boardinfo[] = {
 /*
 	{
@@ -108,7 +139,10 @@ static struct i2c_board_info rpr0521_i2cdriver_boardinfo[] = {
 
 };
 
+static const unsigned short normal_i2c[] = { 0x38, I2C_CLIENT_END };
 
+
+/** i2c device id  declaration */
 static struct i2c_device_id rpr0521_i2cdriver_idtable[] = {
 	{"rpr0521",0},
 	{}
@@ -116,17 +150,26 @@ static struct i2c_device_id rpr0521_i2cdriver_idtable[] = {
 
 MODULE_DEVICE_TABLE(i2c, rpr0521_i2cdriver_idtable);
 
+
+/** i2c driver operation definition */
+
+
+
+
+/** i2c driver declaration */
 static struct i2c_driver rpr0521_i2cdriver = {
 	.driver = {
 		.name = "rpr0521_driver_lkm"
 	},
-	//.probe  = rpr0521_i2c_probe,
-	//.remove = rpr0521_i2c_remove,
 	.id_table = rpr0521_i2cdriver_idtable, 
+	//.probe  = rpr0521_i2c_probe,			to be checked later  
+	//.remove = rpr0521_i2c_remove,			may not be used		  	
 };
 
 
-/** driver registration */
+///////////////////////////////////////////////////
+/** i2c and character driver registration */
+///////////////////////////////////////////////////
 
 /**
 *1.driver registration.
@@ -136,9 +179,13 @@ static struct i2c_driver rpr0521_i2cdriver = {
 
 static int __init initchardriver(void)
 {
-	int ret;
+	/** char driver initialization  */
+	int ret,ret2;
 	struct device *dev_ret;
+	
+
 	printk(KERN_INFO "chardriver_lkm registred\n");
+
 	if( (ret = alloc_chrdev_region(&first, 0, 1, "chardriver_lkm")) <0  )
 	{
 		return ret;
@@ -150,7 +197,7 @@ static int __init initchardriver(void)
 		return PTR_ERR(cl);
 	}
 
-	if(IS_ERR(dev_ret = device_create(cl, NULL, first, NULL, "chardriver_null")))
+	if(IS_ERR(dev_ret = device_create(cl, NULL, first, NULL, "chardriver_null")))    ///  chardriver_null appears in /dev/null
 	{
 		class_destroy(cl);
 		unregister_chrdev_region(first, 1);
@@ -158,6 +205,7 @@ static int __init initchardriver(void)
 	}
 
 	cdev_init(&c_dev,&fops_rpr0521_chardriver);
+
 	if( (ret=cdev_add(&c_dev, first, 1 )) <0 )
 	{
 		device_destroy(cl, first);
@@ -166,11 +214,24 @@ static int __init initchardriver(void)
 		return ret;	
 	}	
 	printk(KERN_INFO "<MAJOR,MINOR>==<%d,%d>\n", MAJOR(first), MINOR(first));
+
+	/** i2c initialization */
+	i2c_adap = i2c_get_adapter(2);	
+	client = i2c_new_device(i2c_adap,&rpr0521_i2cdriver_boardinfo[0]);   //create new client
+	ret2 = i2c_add_driver(&rpr0521_i2cdriver);
 	
-        //i2c_register_board_info(int busnum, struct i2c_board_info *info, unsigned len);
-	//i2c_register_board_info(2, rpr0521_i2cdriver_boardinfo, ARRAY_SIZE(rpr0521_i2cdriver_boardinfo));
-	//i2c_new_client_device(adap, &rpr0521_i2cdriver_boardinfo[0]);
-	return  i2c_add_driver(&rpr0521_i2cdriver);
+	/** i2c_smbus write sensor init commands */	
+	if( i2c_master_send(client, init_buffer, 2 ) < 0 )
+	{
+	printk(KERN_INFO "sensor init success\n");
+	}	
+
+	if( i2c_master_send(client, mode_buffer, 2 ) < 0 )
+	{
+	printk(KERN_INFO "sensor mode success\n");
+	}	
+
+	return ret2;
 
 }
 
@@ -186,10 +247,14 @@ static void __exit exitchardriver(void)
 	i2c_del_driver(&rpr0521_i2cdriver);
 }
 
+
+
 module_init(initchardriver);
 module_exit(exitchardriver);
 
-MODULE_LICENSE("GPL");
+//module_i2c_driver(rpr0521_i2cdriver);   /// substitution of __init and __exit
+
+MODULE_LICENSE("GPL v2");
 MODULE_AUTHOR("Ayush Jain - The_RAM_raider");
 MODULE_DESCRIPTION("character driver test1");
 
